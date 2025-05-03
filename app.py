@@ -70,14 +70,24 @@ def handle_leave():
     if request.sid in waiting_users:
         waiting_users.remove(request.sid)
 
+# @socketio.on('disconnect')
+# def handle_disconnect():
+#     if request.sid in waiting_users:
+#         waiting_users.remove(request.sid)
+#     # Handle partner cleanup
+#     partner_sid = remove_partner_from_room(request.sid)
+#     if partner_sid:
+#         try_match(partner_sid)
+
 @socketio.on('disconnect')
-def handle_disconnect():
-    if request.sid in waiting_users:
-        waiting_users.remove(request.sid)
+def handle_disconnect(sid):
+    if sid in waiting_users:
+        waiting_users.remove(sid)
     # Handle partner cleanup
-    partner_sid = remove_partner_from_room(request.sid)
+    partner_sid = remove_partner_from_room(sid)
     if partner_sid:
         try_match(partner_sid)
+
 
 @socketio.on('offer')
 def handle_offer(data):
