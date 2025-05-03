@@ -114,3 +114,21 @@ function appendMessage(message) {
     messagesContainer.appendChild(messageElement);
     messagesContainer.scrollTop = messagesContainer.scrollHeight; // Scroll to the bottom
 }
+
+// Trigger send on Enter key
+messageInput.addEventListener('keydown', function (event) {
+    if (event.key == 'Enter') {
+        event.preventDefault(); // Prevent newline if using textarea
+        const message = messageInput.value.trim();
+        if (message) {
+            // Emit message to the server
+            socket.emit('send_message', message);
+            // Display message locally
+            appendMessage('You: ' + message);
+            messageInput.value = ''; // Clear input field
+        }
+    }
+});
+
+// Send button click
+sendButton.addEventListener('click', sendMessage);
