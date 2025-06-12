@@ -1,14 +1,26 @@
 const socket = io();
+
 let localStream;
 let peerConnection;
 let currentRoom = null;
 const config = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
 
+// Video elements
 const localVideo = document.getElementById('localVideo');
 const remoteVideo = document.getElementById('remoteVideo');
+
+// Buttons and status
 const nextBtn = document.getElementById('nextBtn');
 const statusText = document.getElementById('status');
+// const chatToggleBtn = document.getElementById('chatToggle');
+// const chatSection = document.getElementById('chatSection');
 
+// Chat elements
+const messageInput = document.getElementById('chatInput');
+const messagesContainer = document.getElementById('chatMessages');
+
+
+// --- Get user media and start signaling ---
 navigator.mediaDevices.getUserMedia({ video: true, audio: true })
     .then(stream => {
         localVideo.srcObject = stream;
@@ -19,6 +31,7 @@ navigator.mediaDevices.getUserMedia({ video: true, audio: true })
         console.error('Error accessing media devices.', error);
     });
 
+// --- Socket.IO signaling events ---
 socket.on('match', (room) => {
     statusText.textContent = "Connected!";
     currentRoom = room;
@@ -46,6 +59,7 @@ socket.on('ice-candidate', async (candidate) => {
     }
 });
 
+// --- Setup WebRTC connection ---
 function setupPeerConnection() {
     peerConnection = new RTCPeerConnection(config);
 
@@ -70,6 +84,7 @@ async function createOffer() {
     socket.emit('offer', { offer: peerConnection.localDescription, room: currentRoom });
 }
 
+// --- Handle next partner button ---
 nextBtn.addEventListener('click', () => {
     if (peerConnection) {
         peerConnection.close();
@@ -80,55 +95,32 @@ nextBtn.addEventListener('click', () => {
     socket.emit('join');
 });
 
+// Send message functionality
+const chatInput = document.getElementById('chatInput');
+const chatMessages = document.getElementById('chatMessages');
 
-
-
-
-
-// Reference to the chat elements
-const messageInput = document.getElementById('messageInput');
-const sendMessageBtn = document.getElementById('sendMessageBtn');
-const messagesContainer = document.getElementById('messages');
-
-// Event listener for sending a message
-sendMessageBtn.addEventListener('click', () => {
-    const message = messageInput.value.trim();
+function sendMessage() {
+    const message = chatInput.value.trim();
     if (message) {
-        // Emit message to the server
+        const msgDiv = document.createElement('div');
+        msgDiv.textContent = "You: " + message;
+        chatMessages.appendChild(msgDiv);
+        chatInput.value = '';
+        chatInput.focus();
         socket.emit('send_message', message);
-        // Display message locally
-        appendMessage('You: ' + message);
-        messageInput.value = ''; // Clear input field
     }
-});
-
-// Listen for incoming messages from the server
-socket.on('receive_message', (message) => {
-    appendMessage(message);
-});
-
-// Function to append message to the message container
-function appendMessage(message) {
-    const messageElement = document.createElement('p');
-    messageElement.textContent = message;
-    messagesContainer.appendChild(messageElement);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight; // Scroll to the bottom
 }
 
-// Trigger send on Enter key
-messageInput.addEventListener('keydown', function (event) {
-    if (event.key == 'Enter') {
-        event.preventDefault(); // Prevent newline if using textarea
-        const message = messageInput.value.trim();
-        if (message) {
-            // Emit message to the server
-            socket.emit('send_message', message);
-            // Display message locally
-            appendMessage('You: ' + message);
-            messageInput.value = ''; // Clear input field
-        }
+chatInput.addEventListener('keydown', function (event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        sendMessage();
     }
 });
 
-// Send button click
-sendButton.addEventListener('click', sendMessage);
+socket.on('receive_message', (message) => {
+    const msgDiv = document.createElement('div');
+    msgDiv.textContent = message;
+    chatMessages.appendChild(msgDiv);
+});
+

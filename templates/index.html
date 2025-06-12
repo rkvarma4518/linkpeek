@@ -2,309 +2,228 @@
 <html lang="en">
 
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>main</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Call App</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
 
-    html,
-    body {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      font-family: sans-serif;
-    }
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+            background-color: #f3f3f3;
+            overflow: hidden;
+        }
 
-    .container {
-      display: flex;
-      width: 100%;
-      height: 100vh;
-      position: relative;
-    }
+        .wrapper {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
 
-    .left-75 {
-      width: 75%;
-      display: flex;
-      transition: all 0.3s ease;
-    }
+        .main-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            padding: 20px;
+            height: 100%;
+        }
 
-    .vid-area-70 {
-      background-color: black;
-      position: relative;
-      transition: width 0.3s ease;
-      width: 70%;
-    }
+        .video-section {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            flex: 1;
+        }
 
-    .vid-area-full {
-      width: 100% !important;
-    }
+        .video {
+            background: #000;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            flex: 1;
+            min-width: 48%;
+        }
 
-    .bottom-box {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 200px;
-      height: 200px;
-      background-color: gray;
-    }
+        .video video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
 
-    .chat-area-30 {
-      width: 30%;
-      background-color: white;
-      transition: all 0.2s ease;
-    }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px 0;
+        }
 
-    .chat-area-hidden {
-      display: none;
-    }
+        .control-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #1d72b8;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+        }
 
-    .add-area-25 {
-      width: 25%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: #f0f0f0;
-      border: 1px dashed #ccc;
-      font-weight: bold;
-      text-align: center;
-    }
+        .control-btn.end-call {
+            background-color: #e63946;
+        }
 
-    .toggle-btn {
-      position: absolute;
-      top: 10px;
-      right: 26%;
-      z-index: 1000;
-      padding: 6px 12px;
-      font-size: 14px;
-      cursor: pointer;
-    }
+        .chat-section {
+            display: none;
+            flex-direction: column;
+            margin-top: 10px;
+            height: 200px;
+        }
 
-    /* Ensure the video fills the parent container without changing layout */
-    #remoteVideo {
-      width: 100%;
-      height: 100%;
-      padding: 100px;
-      object-fit: cover;
-    }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            background: #fafafa;
+            margin-bottom: 10px;
+        }
 
-    /* Local video in bottom-box should be fixed size */
-    #localVideo {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
 
-    #controls {
-      position: absolute;
-      bottom: 20px;
-      /* space from bottom */
-      left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
-      z-index: 10;
-    }
+        .chat-input input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
 
-    #controls button {
-      padding: 8px 16px;
-      font-size: 16px;
-      cursor: pointer;
-    }
+        .chat-input button {
+            padding: 8px 16px;
+            background-color: #1d72b8;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
 
-    #status {
-      margin-top: 8px;
-      color: white;
-    }
+        .ad-section {
+            width: 20%;
+            /* max-width: 350px; */
+            background-color: #fff8e1;
+            padding: 20px;
+            border-left: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: #856404;
+        }
 
+        @media only screen and (max-width: 600px) {
+            .wrapper {
+                flex-direction: column;
+            }
 
+            .main-section,
+            .ad-section {
+                width: 100%;
+                max-width: 100%;
+                height: auto;
+            }
 
+            .ad-section {
+                display: none;
+                /* 👈 Hide ad area on mobile */
+            }
 
+            .video-section {
+                flex-direction: column;
+                /* 👈 Stack videos */
+            }
 
+            .video {
+                min-width: 100%;
+                height: 200px;
+                margin-bottom: 10px;
+            }
 
-
-
-
-    .chat-area-hidden {
-      display: none;
-    }
-
-    /* Message display area */
-    #messages {
-      flex: 3;
-      padding: 10px;
-      overflow-y: auto;
-      background-color: #fff;
-      border-bottom: 3px solid #ccc;
-    }
-
-    /* Input and button container */
-    #chatContainer {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-    }
-
-    /* Input and button area at the bottom */
-    #messageInput {
-      height: 40px;
-      padding: 10px 15px;
-      border: 3px solid #ccc;
-      border-top: none;
-      outline: none;
-    }
-
-    #sendMessageBtn {
-      padding: 10px 15px;
-      border: none;
-      background-color: #4CAF50;
-      color: white;
-      display: flex;
-      justify-content: center;
-      cursor: pointer;
-    }
-
-    #sendMessageBtn:hover {
-      background-color: #45a049;
-    }
-
-    /* Wrapper to keep input and button together at bottom */
-    #chatContainer>div:last-child,
-    #messageInput,
-    #sendMessageBtn {
-      display: flex;
-    }
-
-    #messageInput {
-      border-right: none;
-    }
-
-    #sendMessageBtn {
-      border-left: none;
-      border-radius: 0;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /* Mobile responsive adjustments */
-    @media (max-width: 768px) {
-
-      /* Hide the ad area */
-      .add-area-25 {
-        display: none;
-      }
-
-      /* Expand the left area to fill full width */
-      .left-75 {
-        width: 100%;
-        flex-direction: column;
-        /* Stack video and chat vertically */
-      }
-
-      /* Adjust video area to fit 100% width when ad is hidden */
-      .vid-area-70 {
-        width: 100%;
-        /* Full width for video */
-        height: 100%;
-        /* Adjust height */
-      }
-
-      #remoteVideo {
-        width: 100%;
-        height: 100%;
-        padding: 100px 10px;
-        object-fit: cover;
-      }
-
-      .bottom-box {
-        margin: 10px;
-        width: 100px;
-        height: 150px;
-        background-color: gray;
-      }
-
-      .chat-area-30 {
-        height: 35%;
-        width: 100%;
-        overflow-y: auto;
-        border-top: 3px solid #ccc;
-      }
-
-    }
-  </style>
+            .chat-section {
+                height: 150px;
+            }
+        }
+    </style>
 </head>
 
 <body>
-  <div class="container">
-    <button class="toggle-btn" id="toggleBtn">Chat</button>
+    <div class="wrapper">
+        <div class="main-section">
+            <!-- Videos -->
+            <div class="video-section">
+                <div class="video local-video">
+                    <video id="localVideo" autoplay muted></video>
+                </div>
 
-    <div class="left-75">
-      <div class="vid-area-70 vid-area-full" id="videoArea">
+                <div class="video remote-video">
+                    <video id="remoteVideo" autoplay></video>
+                </div>
+            </div>
 
-        <video id="remoteVideo" autoplay></video>
-        <!-- Controls and Next button -->
-        <div id="controls">
-          <button id="nextBtn">Next</button>
-          <p id="status">Waiting for a partner...</p>
+            <!-- Controls -->
+            <div class="controls">
+                <!-- <button class="control-btn">🎙️ Mute</button>
+                <button class="control-btn">🎥 Camera</button> -->
+                <button class="control-btn" id="chatToggle">💬 Chat</button>
+                <button id="nextBtn" class="control-btn end-call">🔴 Next</button>
+            </div>
+            <div class="status-text" id="status">Waiting for a partner...</div>
+            <!-- Chat -->
+            <div class="chat-section" id="chatSection">
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Messages go here -->
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="chatInput" placeholder="Type a message..." />
+                    <button onclick="sendMessage()">Send</button>
+                </div>
+            </div>
         </div>
 
-        <div class="bottom-box">
-          <video id="localVideo" autoplay muted></video>
+        <!-- Advertisement -->
+        <div class="ad-section">
+            <p>Ad Space - Your Ad Here</p>
         </div>
-
-      </div>
-
-
-      <div class="chat-area-30 chat-area-hidden" id="chatArea">
-        <div id="chatContainer">
-          <div id="messages">
-            <!-- Messages will be displayed here -->
-          </div>
-          <input type="text" id="messageInput" placeholder="Type a message..." />
-          <button id="sendMessageBtn">Send</button>
-        </div>
-      </div>
     </div>
 
-    <div class="add-area-25">
-      <p>Advertisement area</p>
-    </div>
+    <script>
+        const chatToggleBtnnn = document.getElementById('chatToggle');
+        const chatSectionnn = document.getElementById('chatSection');
 
-  </div>
+        chatToggleBtnnn.addEventListener('click', () => {
+            if (chatSectionnn.style.display === 'flex') {
+                chatSectionnn.style.display = 'none';
+            } else {
+                chatSectionnn.style.display = 'flex';
+            }
+        });
 
-  <script>
-    const toggleBtn = document.getElementById("toggleBtn");
-    const chatArea = document.getElementById("chatArea");
-    const videoArea = document.getElementById("videoArea");
-
-    toggleBtn.addEventListener("click", () => {
-      const isHidden = chatArea.classList.contains("chat-area-hidden");
-
-      if (isHidden) {
-        chatArea.classList.remove("chat-area-hidden");
-        videoArea.classList.remove("vid-area-full");
-        toggleBtn.textContent = "Hide Chat";
-      } else {
-        chatArea.classList.add("chat-area-hidden");
-        videoArea.classList.add("vid-area-full");
-        toggleBtn.textContent = "Chat";
-      }
-    });
-  </script>
-  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-  <script src="/static/js/main.js"></script>
+    </script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="/static/js/main.js"></script>
 </body>
 
 </html>
