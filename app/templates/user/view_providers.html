@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% block title %}Available Service Providers{% endblock %}
+{% block content %}
+
+<h2>Available Service Providers</h2>
+
+<form method="GET" class="mb-4">
+  <div class="row g-2">
+    <div class="col-md-5">
+      <input type="text" name="profession" class="form-control" placeholder="Profession (e.g. plumber)"
+        value="{{ profession or '' }}">
+    </div>
+    <div class="col-md-5">
+      <input type="text" name="address" class="form-control" placeholder="Address (e.g. Delhi)"
+        value="{{ address or '' }}">
+    </div>
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-primary w-100">Search</button>
+    </div>
+  </div>
+</form>
+
+{% if providers %}
+<div class="row">
+  {% for p in providers %}
+  <div class="col-md-6 mb-4">
+    <div class="card shadow-sm p-3">
+      <h5>
+        {{ p.username }}
+        {% if p.verified %}
+        <span class="text-primary">&#10004;</span>
+        {% endif %}
+      </h5>
+      <p><strong>Profession:</strong> {{ p.profession }}</p>
+
+      {% if p.profile %}
+      <p><strong>Name:</strong> {{ p.profile.full_name or 'N/A' }}</p>
+      <p><strong>Email:</strong> {{ p.profile.email or 'N/A' }}</p>
+      <p><strong>Phone:</strong> {{ p.profile.phone or 'N/A' }}</p>
+      <p><strong>Address:</strong> {{ p.profile.address or 'N/A' }}</p>
+      <p><strong>Service Info:</strong> {{ p.profile.service_info or 'No details provided' }}</p>
+
+      {% if p.profile.image_path %}
+      <p><strong>Photo:</strong><br>
+        <img src="{{ url_for('static', filename='uploads/' ~ p.profile.image_path) }}" width="120"
+          class="img-thumbnail">
+      </p>
+      {% endif %}
+
+      {% if p.profile.video_path %}
+      <p><strong>Video:</strong><br>
+        <video width="220" controls>
+          <source src="{{ url_for('static', filename='uploads/' ~ p.profile.video_path) }}" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </p>
+      {% endif %}
+
+      <!-- Existing rating display -->
+      <p><strong>Rating:</strong>
+        {% if p.received_ratings %}
+        {{ '%.1f' % (p.received_ratings | map(attribute='rating') | sum / p.received_ratings|length) }} / 5
+        ({{ p.received_ratings|length }} reviews)
+        {% else %}
+        No ratings yet
+        {% endif %}
+      </p>
+
+      <!-- ✅ Rating form -->
+      <form method="POST" action="{{ url_for('user.rate_provider', provider_id=p.id) }}">
+        <div class="mb-2">
+          <label class="form-label">Give Rating:</label>
+          <select name="rating" class="form-select form-select-sm" required>
+            <option value="5">⭐⭐⭐⭐⭐</option>
+            <option value="4">⭐⭐⭐⭐</option>
+            <option value="3">⭐⭐⭐</option>
+            <option value="2">⭐⭐</option>
+            <option value="1">⭐</option>
+          </select>
+        </div>
+        <div class="mb-2">
+          <textarea name="comment" class="form-control" placeholder="Write feedback (optional)" rows="2"></textarea>
+        </div>
+        <button type="submit" class="btn btn-sm btn-success">Submit</button>
+      </form>
+
+      {% else %}
+      <p class="text-muted">No profile information available.</p>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-warning text-center mt-4">
+  <h5>No service providers found.</h5>
+  <p>Try changing your profession or address keywords.</p>
+  <a href="{{ url_for('user.view_providers') }}" class="btn btn-outline-primary mt-2">Reset Filters</a>
+</div>
+{% endif %}
+
+<!-- This content always shows regardless of search -->
+<div class="mt-5">
+  <h4>How This Platform Works</h4>
+  <p>Quickly find and connect with verified professionals such as plumbers, electricians, and engineers in your area.
+  </p>
+
+  <h5 class="mt-4">Top Services You Can Hire</h5>
+  <ul>
+    <li>✅ Plumbing services for home & office</li>
+    <li>✅ Electrical installation & repairs</li>
+    <li>✅ Civil & mechanical engineering help</li>
+    <li>✅ Verified professionals with contact info & ratings</li>
+  </ul>
+
+  <h5 class="mt-4">Need Help?</h5>
+  <p>Contact our support team if you need assistance hiring a professional.</p>
+</div>
+
+{% endblock %}

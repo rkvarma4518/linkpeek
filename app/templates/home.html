@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Welcome - Service Hire{% endblock %}
+{% block content %}
+<div class="text-center">
+    <h1>Welcome to Service Hire</h1>
+    <p class="lead">Find and hire trusted service providers like electricians, plumbers, and engineers.</p>
+    <a href="{{ url_for('auth.login') }}" class="btn btn-primary">Login</a>
+    <a href="{{ url_for('auth.register') }}" class="btn btn-secondary">Register</a>
+</div>
+{% endblock %}

@@ -15,4 +15,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Run Flask-SocketIO app using eventlet
-CMD ["python", "app.py"]
+CMD ["python", "run.py"]

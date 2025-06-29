@@ -1,3 +1,10 @@
 Flask
-flask_socketio
-eventlet
+Flask-Login
+Flask-Mail
+Flask-SQLAlchemy
+email-validator
+Werkzeug
+itsdangerous
+Jinja2
+click
+MarkupSafe

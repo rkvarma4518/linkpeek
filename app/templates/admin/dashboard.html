@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard - Service Hire{% endblock %}
+{% block content %}
+<h2>Admin Dashboard</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Profession</th>
+            <th>Verified</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.role }}</td>
+            <td>{{ user.profession or '-' }}</td>
+            <td>
+                {% if user.verified %}
+                    <span style="color:blue;">&#10004;</span>
+                {% else %}
+                    <span style="color:red;">&#10008;</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if user.role == 'provider' and not user.verified %}
+                    <a href="{{ url_for('admin.verify', user_id=user.id) }}" class="btn btn-sm btn-success">Verify</a>
+                {% endif %}
+                <a href="{{ url_for('admin.delete_user', user_id=user.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Delete user?')">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

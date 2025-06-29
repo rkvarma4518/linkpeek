@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}User Dashboard - Service Hire{% endblock %}
+{% block content %}
+<h2>Available Service Providers</h2>
+
+<form method="GET" action="{{ url_for('user.view_providers') }}" class="mb-4">
+    <div class="row g-2">
+        <div class="col-md-5">
+            <input type="text" name="profession" class="form-control" placeholder="Profession (e.g. plumber)"
+                value="{{ profession or '' }}">
+        </div>
+        <div class="col-md-5">
+            <input type="text" name="address" class="form-control" placeholder="Address (e.g. Delhi)"
+                value="{{ address or '' }}">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Search</button>
+        </div>
+    </div>
+</form>
+
+<!-- This content always shows regardless of search -->
+<div class="mt-5">
+  <h4>How This Platform Works</h4>
+  <p>Quickly find and connect with verified professionals such as plumbers, electricians, and engineers in your area.</p>
+
+  <h5 class="mt-4">Top Services You Can Hire</h5>
+  <ul>
+    <li>✅ Plumbing services for home & office</li>
+    <li>✅ Electrical installation & repairs</li>
+    <li>✅ Civil & mechanical engineering help</li>
+    <li>✅ Verified professionals with contact info & ratings</li>
+  </ul>
+
+  <h5 class="mt-4">Need Help?</h5>
+  <p>Contact our support team if you need assistance hiring a professional.</p>
+</div>
+
+{% endblock %}

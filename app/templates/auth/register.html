@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Register - Service Hire{% endblock %}
+{% block content %}
+<h2>Register</h2>
+<form method="POST" action="{{ url_for('auth.register') }}">
+    <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" class="form-control" id="username" name="username" required />
+    </div>
+    <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="email" name="email" required />
+    </div>
+    <div class="mb-3">
+        <label for="contact" class="form-label">Contact Number</label>
+        <input type="text" class="form-control" id="contact" name="contact" required />
+    </div>
+    <div class="mb-3">
+        <label for="role" class="form-label">Register As</label>
+        <select class="form-select" id="role" name="role" required onchange="toggleProfession()">
+            <option value="">Select Role</option>
+            <option value="user">User</option>
+            <option value="provider">Service Provider</option>
+        </select>
+    </div>
+    <div class="mb-3" id="profession-div" style="display:none;">
+        <label for="profession" class="form-label">Profession</label>
+        <input type="text" class="form-control" id="profession" name="profession" placeholder="e.g., Plumber, Electrician" />
+    </div>
+    <div class="mb-3" id="about-div" style="display:none;">
+        <label for="about" class="form-label">About Yourself</label>
+        <textarea class="form-control" id="about" name="about" rows="3"></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" class="form-control" id="password" name="password" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Register</button>
+</form>
+
+<script>
+function toggleProfession() {
+    const roleSelect = document.getElementById('role');
+    const profDiv = document.getElementById('profession-div');
+    const aboutDiv = document.getElementById('about-div');
+    if (roleSelect.value === 'provider') {
+        profDiv.style.display = 'block';
+        aboutDiv.style.display = 'block';
+    } else {
+        profDiv.style.display = 'none';
+        aboutDiv.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}
