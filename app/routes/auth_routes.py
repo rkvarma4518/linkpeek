@@ -93,7 +93,7 @@ def register():
             return redirect(url_for('auth.register'))
 
         # ✅ Hash password
-        hashed_password = generate_password_hash(password, method='sha256')
+        hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
 
         # ✅ Generate OTP
         otp = str(random.randint(100000, 999999))
